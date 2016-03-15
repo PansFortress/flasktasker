@@ -1,8 +1,9 @@
 import sqlite3
+import pdb
 from functools import wraps
 
 from flask import Flask, request, flash, redirect, render_template, session, url_for, g
-
+from forms import AddTaskForm
 
 # config
 app = Flask(__name__)
@@ -74,7 +75,7 @@ def tasks():
     g.db.close()
     return render_template(
         'tasks.html',
-        form=AddTaskFrom(request.form),  # something to occur later
+        form=AddTaskForm(request.form),  # something to occur later
         open_tasks=open_tasks,
         closed_tasks=closed_tasks
     )
@@ -110,7 +111,7 @@ def complete(task_id):
     g.db.commit()
     g.db.close()
     flash(str(task_id)+' has been updated to completed')
-    return redirect(url_for(tasks))
+    return redirect(url_for('tasks'))
 
 
 @app.route('/delete/<int:task_id>')
@@ -123,7 +124,7 @@ def delete_entry(task_id):
     g.db.commit()
     g.db.close()
     flash(str(task_id)+' has been deleted from the database')
-    return redirect(url_for(tasks))
+    return redirect(url_for('tasks'))
 
 
 if __name__ == '__main__':
