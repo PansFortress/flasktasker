@@ -3,7 +3,6 @@ from forms import AddTaskForm
 from functools import wraps
 from flask import Flask, request, flash, redirect, render_template, session, url_for, g
 from flask.ext.sqlalchemy import SQLAlchemy
-import models
 
 # config
 
