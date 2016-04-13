@@ -1,8 +1,9 @@
-from forms import AddTaskForm
+from forms import AddTaskForm, RegisterForm, LoginForm
 
 from functools import wraps
 from flask import Flask, request, flash, redirect, render_template, session, url_for, g
 from flask.ext.sqlalchemy import SQLAlchemy
+import models
 
 # config
 
@@ -10,8 +11,8 @@ app = Flask(__name__)
 app.config.from_object('_config')
 db = SQLAlchemy(app)
 
-
 # helper functions
+
 
 def login_required(route):
     @wraps(route)
@@ -97,6 +98,22 @@ def delete_entry(task_id):
     db.session.commit()
     flash(str(task_id) + " has been deleted successfully")
     return redirect(url_for('tasks'))
+
+
+# TODO:: Need to investigate why this is not receiving a POST when submitting from register.html
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    error = None
+    form = RegisterForm(request.form)
+    if request.method == 'POST':
+        print("Testing")
+        if form.validate_on_submit():
+            new_user = User(form.name.data, form.email.data, form.password.data)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Thanks for registering. Please login.')
+            return redirect(url_for('login'))
+    return render_template('register.html', form=form, error=error)
 
 
 if __name__ == '__main__':
